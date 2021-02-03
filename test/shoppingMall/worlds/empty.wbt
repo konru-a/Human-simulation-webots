@@ -1,0 +1,117 @@
+#VRML_SIM R2021a utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation 0.3410040178893056 0.8792265434531309 0.33268144683887874 4.273685089164523
+  position -12.06406047698618 15.097523454699623 0.9682263652852094
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Floor {
+  size 100 100
+}
+Pedestrian {
+}
+Solid {
+  children [
+    RoundTable {
+      translation 0 0 10
+      name "round table(2)"
+    }
+    RoundTable {
+      translation 3 0 10
+      name "round table(1)"
+    }
+    RoundTable {
+      translation 3 0 7
+    }
+  ]
+  name "solid(1)"
+}
+Solid {
+  translation -4 0 10
+  children [
+    Table {
+    }
+    Solid {
+      children [
+        OfficeTelephone {
+          translation 0.5 0.9999843040153787 -0.5
+        }
+        ComputerMouse {
+          translation 0 0.9999984304015394 -0.5
+        }
+        Keyboard {
+          translation -0.3 1 0
+        }
+        DesktopComputer {
+          translation -0.7 1 -0.5
+        }
+        Monitor {
+          translation -0.3 1 -0.5
+        }
+      ]
+    }
+  ]
+}
+Fluid {
+  translation -3 0 5
+  children [
+    Wall {
+      size 5 2.4 0.2
+    }
+  ]
+}
+Fluid {
+  translation 0 0 12
+  children [
+    Wall {
+      name "wall(2)"
+      size 11 2.4 0.2
+    }
+  ]
+}
+Fluid {
+  translation 3 0 5
+  children [
+    Wall {
+      name "wall(1)"
+      size 5 2.4 0.2
+    }
+  ]
+}
+Fluid {
+  translation 6 0 9
+  rotation 0 1 0 1.5708
+  children [
+    Wall {
+      translation 0.5 0 -0.5
+      name "wall(3)"
+      size 7 2.4 0.2
+    }
+  ]
+}
+Fluid {
+  translation -5 0 9
+  rotation 0 1 0 1.5708
+  children [
+    Wall {
+      translation 0.5 0 -0.5
+      name "wall(4)"
+      size 7 2.4 0.2
+    }
+  ]
+}
+Robot {
+  translation -4 0 11
+  rotation 0 1 0 3.14159
+  children [
+    Pedestrian {
+      shirtColor 0.937255 0.160784 0.160784
+    }
+  ]
+  name "robot(1)"
+}

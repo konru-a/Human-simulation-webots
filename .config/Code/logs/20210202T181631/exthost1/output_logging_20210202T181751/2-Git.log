@@ -1,0 +1,46 @@
+Looking for git in: git
+Using git 2.27.0 from git
+> git rev-parse --git-dir
+Open repository: /home/konru/Workspace/webots
+> git status -z -u
+> git check-ignore -v -z --stdin
+> git symbolic-ref --short HEAD
+> git rev-parse master
+> git rev-parse --symbolic-full-name master@{u}
+> git rev-list --left-right master...refs/remotes/origin/master
+> git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname)
+> git remote --verbose
+Warning: Failed to watch ref '/home/konru/Workspace/webots/.git/refs/remotes/origin/master', is most likely packed.
+> git config --get commit.template
+> git check-ignore -v -z --stdin
+> git show --textconv :include/controller/c/webots/robot.h
+> git ls-files --stage -- /home/konru/Workspace/webots/include/controller/c/webots/robot.h
+> git cat-file -s 91809d815506e399e7aa2dff9be9f200fb2dceb1
+> git check-ignore -v -z --stdin
+> git show --textconv :docs/automobile/ackermannvehicle.md
+> git ls-files --stage -- /home/konru/Workspace/webots/docs/automobile/ackermannvehicle.md
+> git cat-file -s 9e7954a338159fb06872ddd3f15dd7b92451fa62
+> git show --textconv :docs/blog/Webots-8-6-0-release.md
+> git ls-files --stage -- /home/konru/Workspace/webots/docs/blog/Webots-8-6-0-release.md
+> git cat-file -s 9b880ea9dab76dcd6953475b616ab5e64ff8831d
+> git check-ignore -v -z --stdin
+> git show --textconv :lib/controller/matlab/wb_supervisor_movie_is_ready.m
+> git ls-files --stage -- /home/konru/Workspace/webots/lib/controller/matlab/wb_supervisor_movie_is_ready.m
+> git cat-file -s 9de7f585cea79e36de98a06d0e3ae4bfe08105cf
+> git check-ignore -v -z --stdin
+> git show --textconv :lib/controller/matlab/WB_SUPERVISOR_MOVIE_READY.m
+> git ls-files --stage -- /home/konru/Workspace/webots/lib/controller/matlab/WB_SUPERVISOR_MOVIE_READY.m
+> git cat-file -s 7c47a23741c25b45146b1ebb59a7695d09e3f9ff
+> git check-ignore -v -z --stdin
+> git show --textconv :lib/controller/matlab/wb_supervisor_movie_start_recording.m
+> git ls-files --stage -- /home/konru/Workspace/webots/lib/controller/matlab/wb_supervisor_movie_start_recording.m
+> git cat-file -s 6c0ab1de7e902f68123fdc733343e49cd87d5834
+> git check-ignore -v -z --stdin
+> git show --textconv :projects/default/libraries/vehicle/java/vehicle.i
+> git ls-files --stage -- /home/konru/Workspace/webots/projects/default/libraries/vehicle/java/vehicle.i
+> git cat-file -s 44d34b23070bc4c17207a7aa10f9d72968aa3248
+> git check-ignore -v -z --stdin
+> git show --textconv :projects/samples/robotbenchmark/wall_following/controllers/wall_following_supervisor/wall_following_supervisor.c
+> git ls-files --stage -- /home/konru/Workspace/webots/projects/samples/robotbenchmark/wall_following/controllers/wall_following_supervisor/wall_following_supervisor.c
+> git check-ignore -v -z --stdin
+> git cat-file -s 1360603c88d7abd4d109aefb66b089940be01973

@@ -1,0 +1,5 @@
+# HSTS 1.0 Known Hosts database for GNU Wget.
+# Edit at your own risk.
+# <hostname>	<port>	<incl. subdomains>	<created>	<max-age>
+josm.openstreetmap.de	0	1	1612242507	16070400
+cyberbotics.com	0	0	1612228730	16000000

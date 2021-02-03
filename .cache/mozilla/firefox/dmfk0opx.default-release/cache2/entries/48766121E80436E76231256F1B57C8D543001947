@@ -1,0 +1,311 @@
+(function($){
+
+  if (typeof _ == 'undefined')
+    babel.Translations.load({}).install();
+
+  $.fn.addAnchor = function(title) {
+    title = title || _("Link here");
+    return this.filter("*[id]").each(function() {
+      $("<a class='anchor'> \u00B6</a>").attr("href", "#" + this.id)
+        .attr("title", title).appendTo(this);
+    });
+  };
+
+  $.fn.checked = function(checked) {
+    if (checked == undefined) { // getter
+      if (!this.length) return false;
+      return this.get(0).checked;
+    } else { // setter
+      return this.each(function() {
+        this.checked = checked;
+      });
+    }
+  };
+
+  // Add a Select All checkbox to each thead in the table.
+  $.fn.addSelectAllCheckboxes = function() {
+    var $table = this;
+    if ($("tr td.sel", $table).length > 0) {
+      $("tr th.sel", $table).append(
+        $('<input type="checkbox" name="toggle_group" />').attr({
+          title: _("Toggle group")
+        }).click(function() {
+          $("tr td.sel input",
+            $(this).closest("thead, tbody").next())
+              .prop("checked", this.checked).change();
+        })
+      );
+      $("tr td.sel", $table).click(function() {
+        var $tbody = $(this).closest("tbody");
+        var $checkboxes = $("tr td.sel input", $tbody);
+        var num_selected = $checkboxes.filter(":checked").length;
+        var none_selected = num_selected === 0;
+        var all_selected = num_selected === $checkboxes.length;
+        $("tr th.sel input", $tbody.prev())
+          .prop({"checked": all_selected,
+                 "indeterminate": !(none_selected || all_selected)});
+      });
+    }
+  };
+
+  $.fn.exclusiveOnClick = function(selector) {
+    var $container = $(this);
+    $container.on("click", selector,
+      function(event) {
+        if (!event.metaKey && !event.altKey)
+          return;
+        var clicked;
+        if (this.tagName === "LABEL") {
+          if (this.htmlFor) {
+            clicked = document.getElementById(this.htmlFor);
+          } else {
+            clicked = this.children[0];
+          }
+        } else {
+          clicked = this;
+        }
+        var $clicked = $(clicked);
+        $container.find(":checkbox").not(clicked).prop("checked", false);
+        $clicked.prop("checked", true);
+      }).mousedown(function(event) {
+        if (event.metaKey || event.altKey) {
+          event.preventDefault(); // Prevent border on Firefox.
+        }
+      });
+  };
+
+  // Conditionally disable the submit button. Returns a jQuery object.
+  $.fn.disableSubmit = function(determinant) {
+    determinant = $(determinant);
+    var subject = $(this);
+    var isDisabled;
+    if (determinant.is("input:checkbox")) {
+      isDisabled = function () {
+          return determinant.filter(":checked").length === 0;
+      }
+    } else if (determinant.is("input:file")) {
+      isDisabled = function () {
+          return !determinant.val();
+      }
+    } else {
+      return subject;
+    }
+    function toggleDisabled() {
+      subject.prop("disabled", isDisabled);
+      if (subject.prop("disabled")) {
+        subject.attr("title", _("At least one item must be selected"))
+      } else {
+        subject.removeAttr("title");
+      }
+    }
+    determinant.change(toggleDisabled);
+    toggleDisabled();
+    return subject;
+  };
+
+  $.fn.enable = function(enabled) {
+    if (enabled == undefined) enabled = true;
+    return this.each(function() {
+      this.disabled = !enabled;
+      var label = $(this).parents("label");
+      if (!label.length && this.id) {
+        label = $("label[for='" + this.id + "']");
+      }
+      if (!enabled) {
+        label.addClass("disabled");
+      } else {
+        label.removeClass("disabled");
+      }
+    });
+  };
+
+  $.fn.getAbsolutePos = function() {
+    return this.map(function() {
+      var left = this.offsetLeft;
+      var top = this.offsetTop;
+      var parent = this.offsetParent;
+      while (parent) {
+        left += parent.offsetLeft;
+        top += parent.offsetTop;
+        parent = parent.offsetParent;
+      }
+      return {left: left, top: top};
+    });
+  };
+
+  $.fn.scrollToTop = function() {
+    return this.each(function() {
+      scrollTo(0, $(this).getAbsolutePos()[0].top);
+      return false;
+    });
+  };
+
+  // Disable the form's submit action after the submit button is pressed by
+  // replacing it with a handler that cancels the action. The handler is
+  // removed when navigating away from the page so that the action will
+  // be enabled when using the back button to return to the page.
+  $.fn.disableOnSubmit = function() {
+    this.click(function() {
+      var form = $(this).closest("form");
+      if (form.hasClass("trac-submit-is-disabled")) {
+        form.bind("submit.prevent-submit", function() {
+          return false;
+        });
+        $(window).on("unload", function() {
+          form.unbind("submit.prevent-submit");
+        });
+      } else {
+        form.addClass("trac-submit-is-disabled");
+        $(window).on("unload", function() {
+          form.removeClass("trac-submit-is-disabled");
+        })
+      }
+    });
+  };
+
+  $.loadStyleSheet = function(href, type) {
+    type = type || "text/css";
+    $(document).ready(function() {
+      var link;
+      $("link[rel=stylesheet]").each(function() {
+        if (this.getAttribute("href") === href) {
+          if (this.disabled)
+            this.disabled = false;
+          link = this;
+          return false;
+        }
+      });
+      if (link !== undefined)
+        return;
+      if (document.createStyleSheet) { // MSIE
+        document.createStyleSheet(href);
+      } else {
+        $("<link rel='stylesheet' type='" + type + "' href='" + href + "' />")
+          .appendTo("head");
+      }
+    });
+  };
+
+  // {script.src: [listener1, listener2, ...]}
+  var readyListeners = {};
+
+  $.documentReady = function(listener) {
+    var script = document.currentScript;
+    if (script === undefined) {
+      script = $("head script");
+      script = script[script.length - 1];
+    }
+    if (script) {
+      var href = script.getAttribute("src");
+      if (!(href in readyListeners))
+        readyListeners[href] = [];
+      var listeners = readyListeners[href];
+      listeners.push(listener);
+    }
+    $(document).ready(listener);
+  };
+
+  $.loadScript = function(href, type, charset) {
+    var script;
+    $("head script").each(function() {
+      if (this.getAttribute("src") === href) {
+        script = this;
+        return false;
+      }
+    });
+    if (script !== undefined) {
+      // Call registered ready listeners
+      $.each(readyListeners[href] || [], function(idx, listener) {
+        listener.call(document, $);
+      });
+    } else {
+      // Don't use $("<script>").appendTo("head") to avoid adding
+      // "_=<timestamp>" parameter to url.
+      script = document.createElement("script");
+      script.src = href;
+      script.async = false;
+      script.type = type || "text/javascript";
+      script.charset = charset || "utf-8";
+      $("head")[0].appendChild(script);
+    }
+  };
+
+  var warn_unsaved_changes;
+
+  // Prompt a warning if leaving the page with unsaved changes
+  $.setWarningUnsavedChanges = function(enabled, message) {
+    if (enabled) {
+      if (!warn_unsaved_changes) {
+        $(window).bind("beforeunload", function() {
+          return warn_unsaved_changes;
+        });
+      }
+      warn_unsaved_changes = message || _("You have unsaved changes. Your " +
+        "changes will be lost if you leave this page before saving your " +
+        "changes.");
+    } else {
+      $(window).unbind("beforeunload");
+      warn_unsaved_changes = null;
+    }
+  };
+
+  // Escape special HTML characters (&<>")
+  var quote = {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"};
+
+  $.htmlEscape = function(value) {
+    if (typeof value != "string")
+      return value;
+    return value.replace(/[&<>"]/g, function(c) { return quote[c]; });
+  };
+
+  function format(str, args, escape) {
+    var kwargs = args[args.length - 1];
+    return str.replace(/\${?(\w+)}?/g, function(_, k) {
+      var result;
+      if (k.length == 1 && k >= '0' && k <= '9')
+        result = args[k - '0'];
+      else
+        result = kwargs[k];
+      return escape ? escape(result) : result;
+    });
+  }
+
+  // Expand positional ($1 .. $9) and keyword ($name) arguments in a string.
+  // The htmlFormat() version HTML-escapes arguments prior to substitution.
+  $.format = function(str) {
+    return format(str, arguments);
+  };
+
+  $.htmlFormat = function(str) {
+    return format(str, arguments, $.htmlEscape);
+  };
+
+  $.template = $.format;    // For backward compatibility
+
+  // Used for dynamically updating the height of a textarea
+  window.resizeTextArea = function (id, rows) {
+    var textarea = $("#" + id).get(0);
+    if (!textarea || textarea.rows == undefined) return;
+    $(textarea).height("");
+    textarea.rows = rows;
+  }
+
+})(jQuery);
+·ËÌÆM      `Ø`ØBœl`"‡   7    :https://josm.openstreetmap.de/chrome/common/js/trac.js necko:classified 1 strongly-framed 1 security-info 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 request-method GET response-head HTTP/1.1 200 Ok
+Date: Tue, 02 Feb 2021 04:41:45 GMT
+Server: Apache/2.4.29 (Ubuntu)
+X-Clacks-Overhead: GNU Terry Pratchett
+Strict-Transport-Security: max-age=16070400; includeSubDomains
+Content-Length: 8819
+Last-Modified: Tue, 22 Jan 2019 17:41:43 GMT
+Content-Type: application/javascript
+ original-response-headers Date: Tue, 02 Feb 2021 04:41:45 GMT
+Server: Apache/2.4.29 (Ubuntu)
+X-Clacks-Overhead: GNU Terry Pratchett
+Strict-Transport-Security: max-age=16070400; includeSubDomains
+Content-Length: 8819
+Last-Modified: Tue, 22 Jan 2019 17:41:43 GMT
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: application/javascript
+ ctid 2 uncompressed-len 0 net-response-time-onstart 914 net-response-time-onstop 915   "s

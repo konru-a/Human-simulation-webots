@@ -1,0 +1,29 @@
+#VRML_SIM R2021a utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation -0.9966284270562881 -0.07127052504320441 0.04064837811493911 0.39403315046663445
+  position -0.2557327091113757 2.68459719081146 5.4607916215633105
+}
+TexturedBackground {
+}
+Pedestrian {
+  controllerArgs [
+    ""
+  ]
+  shirtColor 1 0.55 0.2
+}
+TexturedBackgroundLight {
+}
+SpotLight {
+  attenuation 0 0 1
+  beamWidth 0.7
+  direction 0 1 -1
+}
+StraightRoadSegment {
+}
+Pedestrian {
+  name "pedestrian(1)"
+  shoesColor 1 0.15 0.06
+}
